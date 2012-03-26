@@ -23,6 +23,9 @@
 %type <dval> literal;
 %type <dval> number;
 %type <dval> datum;
+%type <dval> procedure_call;
+%type <sval> operator;
+%type <dval> expressions;
 %%
 
 commands_or_defs:	commands_or_defs command_or_def
@@ -40,8 +43,8 @@ command:		expression	{ printDatum($1);}
        ;
 
 expression:		VARIABLE		{$$ = lookupVar($1); }
-	  |		literal			{$$ = $1 }
-	  |		procedure_call		{printf("expression "); }
+	  |		literal			{$$ = $1; }
+	  |		procedure_call		{$$ = $1; }
 	  |		lambda_expression	{printf("expression "); }
 	  ;
 
@@ -74,18 +77,20 @@ datums:			datums datum
       |
       ;
 
-procedure_call:		'(' operator expressions ')'	{printf("procedure_call "); }
+procedure_call:		'(' operator expressions ')'	{$$ = doProcedureCall($2, $3); }
 	      ;
 
-operator:		VARIABLE	{printf("operator "); }
-	|		'+'		{printf("operator "); }
-	|		'-'		{printf("operator "); }
-	|		'*'		{printf("operator "); }
-	|		'/'		{printf("operator "); }
+operator:		VARIABLE	{$$ = $1; }
+	|		'+'		{$$ = "+"; }
+	|		'-'		{$$ = "-"; }
+	|		'*'		{$$ = "*"; }
+	|		'/'		{$$ = "/"; }
 	;
 
-expressions:		expressions expression
-	   |
+expressions:		expression expressions	{$$ = malloc(sizeof(datum));
+	   					*$$ = (datum){D_CONS, {.valCons=(cons){$1, $2}}}; }
+	   |		/*empty*/		{$$ = malloc(sizeof(datum));
+	   					*$$ = (datum){D_NULL}; }
 	   ;
 
 lambda_expression:	'(' "lambda" formals expression ')'	{printf("lambda_expression "); }

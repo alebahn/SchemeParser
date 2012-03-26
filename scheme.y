@@ -5,34 +5,24 @@
 	float fval;
 	int ival;
 	char *sval;
-	char cval;
 }
 %token QUOTE
 %token <sval> VARIABLE
 %token <sval> KEYWORD
 %token <sval> STRING
-%token <sval> NAME
 %token <ival> NUMBER
 %token <fval> FNUMBER
-%type <fval> expression
-%type <fval> term
-%type <fval> factor
 %%
-statement:	NAME '=' expression	{ printf("%s = %f\n", $1, $3);}
-	|	expression		{ printf("= %f\n", $1); }
-	;
 
-expression:	expression '+' term	{ $$ = $1 + $3; }
-	|	expression '-' term	{ $$ = $1 - $3; }
-	|	term			{ $$ = $1; }
-	;
+commands_or_defs:	command_or_def commands_or_defs
+		|	command_or_def
+		;
 
-term:		term '*' factor		{ $$ = $1 * $3; }
-    	|	term '/' factor		{ $$ = $1 / $3; }
-	|	factor			{ $$ = $1; }
-	;
+command_or_def:		define
+	     ;
 
-factor:		'(' expression ')'	{ $$ = $2; }
-      	|	NUMBER			{ $$ = $1; }
-	|	FNUMBER			{ $$ = $1; }
+define:			'(' "define" VARIABLE expression ')'	{ printf("recognized definition"); }
+      ;
 
+expression:		VARIABLE
+	  ;

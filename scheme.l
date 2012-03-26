@@ -1,17 +1,20 @@
+%{
+#include "scheme.tab.h"
+%}
 %%
-[\t ]+ {printf("skipping whitespace\n");}
-[0-9]+ {printf("that's an int number\n");}
-[0-9]+\.[0-9]+ {printf("that's a float number\n");}
+[\t ]+
+[0-9]+ {yylval.ival=atoi(yytext); return NUMBER;}
+[0-9]+\.[0-9]+ {yylval.fval=atof(yytext); return FNUMBER;}
 lambda |
 define |
 car |
-quote {printf("that's %s\n", yytext);}
-\"[^\"]*\" {printf("that's a string\n");}
-' {printf("that's a quote mark\n");}
-[a-zA-Z][a-zA-Z0-9]* {printf("that's a variable");}
-. {printf("that's annother character");}
+quote {yylval.sval=yytext; return KEYWORD;}
+\"[^\"]*\" {yylval.sval=yytext; return STRING;}
+' {return QUOTE;}
+[a-zA-Z][a-zA-Z0-9]* {yylval.sval=yytext; return VARIABLE;}
+. {return yytext[0];}
 %%
 main()
 {
-	yylex();
+	yyparse();
 }

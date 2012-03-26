@@ -2,3 +2,7 @@
 *.swp
 testSemantics
 tags
+scheme.c
+scheme.tab.c
+scheme.tab.h
+schemeParser

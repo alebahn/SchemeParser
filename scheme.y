@@ -5,7 +5,12 @@
 	float fval;
 	int ival;
 	char *sval;
+	char cval;
 }
+%token QUOTE
+%token <sval> VARIABLE
+%token <sval> KEYWORD
+%token <sval> STRING
 %token <sval> NAME
 %token <ival> NUMBER
 %token <fval> FNUMBER

@@ -8,8 +8,8 @@
 \"[^\"]*\" {yylval.sval=yytext; return STRING;}
 lambda {return LAMBDA;}
 define {return DEFINE;}
-quote |
-' {return QUOTE;}
+quote {return QUOTE;}
+' {return QUOTE_MARK;}
 [a-zA-Z][a-zA-Z0-9]* {yylval.sval=yytext; return VARIABLE;}
 . {return yytext[0];}
 %%

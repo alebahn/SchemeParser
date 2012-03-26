@@ -12,6 +12,7 @@ int testAreEqual();
 int testOneVar(char* varName, datum* var);
 int testVars();
 int testOneProcedure(char* op, datum* args, int numArg, datum* expected);
+int testProcedureNullArg();
 int testDoProcedureCalls();
 int testOneCar(datum* arg, datum* expected);
 int testDoCar();

@@ -141,6 +141,23 @@ int testOneProcedure(char* op, datum* args, int numArg, datum* expected)
 	printf("\n");
 	return areEqual(out, expected);
 }
+int testProcedureNullArg()
+{
+	datum* expected=NULL;
+	char* op="+";
+	datum dNull={D_NULL};
+	datum dArgs={D_CONS, {.valCons=(cons){NULL, &dNull}}};
+	printf("Performing %s on ", op);
+	printDatum(&dArgs);
+
+	datum* out=doProcedureCall(op, &dArgs);
+	printf(": ");
+	printDatum(out);
+	printf(" expected ");
+	printDatum(expected);
+	printf("\n");
+	return areEqual(out, expected);
+}
 int testDoProcedureCalls()
 {
 	initializeTable();
@@ -168,6 +185,8 @@ int testDoProcedureCalls()
 	expected=(datum){D_INT, {.valInt=-6}};
 	result&=testOneProcedure("-", test7, 3, &expected);
 	result&=testOneProcedure("+", NULL, 0, NULL);
+	result&=testProcedureNullArg();
+
 	printf("*testDoProcedureCalls %s*\n",result?"PASSED":"FAILED");
 	return result;
 }

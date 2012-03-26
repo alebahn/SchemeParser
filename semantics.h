@@ -59,6 +59,7 @@ int defineVar(char* name, datum* value);
 datum* createFuncPoint(datum* (*funcPtr) (datum*));
 void initializeTable();
 datum* lookupVar(char* name);
+datum* executeDatum(datum* expr);
 datum* doProcedureCall(char* name, datum* args);
 datum* doAdd(datum* args);
 datum* doSub(datum* args);

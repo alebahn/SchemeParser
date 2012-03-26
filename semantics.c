@@ -91,6 +91,15 @@ datum* doProcedureCall(char* name, datum* args)
 		return NULL;
 	return executeLambda(lookupVar(name), args);
 }
+datum* executeDatum(datum* expr)
+{
+	if(expr->type==D_CONS)
+	{
+		return executeLambda(expr->valCons.car, expr->valCons.cdr);
+	}
+	else
+		return expr;
+}
 
 datum* setupArith(datum* args, int identity, datum* (*recurFunc)(datum*), enum DATUM_TYPE *resultType, int* arg1int, int* arg2int, float* arg1float, float* arg2float)
 {
@@ -310,12 +319,7 @@ datum* executeLambda(datum* lam, datum* args)
 		++i;
 	}
 	datum* initializedBody=initializeArgs(lam->valLambda.body, argsArray);
-	if(initializedBody->type==D_CONS)
-	{
-		return executeLambda(initializedBody->valCons.car, initializedBody->valCons.cdr);
-	}
-	else
-		return initializedBody;
+	executeDatum(initializedBody);
 }
 
 int areEqual(datum* value1, datum* value2)

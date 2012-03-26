@@ -19,6 +19,7 @@
 %token DEFINE "define"
 %token LAMBDA "lambda"
 
+%type <dval> command;
 %type <dval> expression;
 %type <dval> literal;
 %type <dval> number;
@@ -33,13 +34,13 @@ commands_or_defs:	commands_or_defs command_or_def
 		;
 
 command_or_def:		define
-	      |		command
+	      |		command	{ printDatum($1); }
 	      ;
 
 define:			'(' "define" VARIABLE expression ')'	{defineVar($3, $4); }
       ;
 
-command:		expression	{ printDatum($1);}
+command:		expression	{ $$ = executeDatum($1); }
        ;
 
 expression:		VARIABLE		{$$ = lookupVar($1); }
@@ -77,7 +78,8 @@ datums:			datums datum
       |
       ;
 
-procedure_call:		'(' operator expressions ')'	{$$ = doProcedureCall($2, $3); }
+procedure_call:		'(' operator expressions ')'	{$$ = malloc(sizeof(datum));
+	      						*$$ = (datum){D_CONS, {.valCons=(cons){lookupVar($2), $3}}}; }
 	      ;
 
 operator:		VARIABLE	{$$ = $1; }

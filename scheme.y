@@ -8,10 +8,11 @@
 }
 %token QUOTE
 %token <sval> VARIABLE
-%token <sval> KEYWORD
 %token <sval> STRING
 %token <ival> NUMBER
 %token <fval> FNUMBER
+%token DEFINE "define"
+%token LAMBDA "lambda"
 %%
 
 commands_or_defs:	command_or_def commands_or_defs

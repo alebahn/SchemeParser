@@ -28,4 +28,4 @@ testSemantics.o: testSemantics.c testSemantics.h semantics.h
 clean:
 	rm -f *.o
 	rm -f testSemantics
-	rm -f simpleCalc.c simpleCalc.tab.c simpleCalc.tab.h simpleCalc
+	rm -f scheme.c scheme.tab.c scheme.tab.h schemeParser

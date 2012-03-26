@@ -95,6 +95,8 @@ datum* doProcedureCall(char* name, datum* args)
 datum* setupArith(datum* args, int identity, datum* (*recurFunc)(datum*), enum DATUM_TYPE *resultType, int* arg1int, int* arg2int, float* arg1float, float* arg2float)
 {
 	cons argCons=args->valCons;
+	if(argCons.car==NULL)
+		return NULL;
 	datum *arg1, *arg2;
 	*resultType = D_INT;
 	datum* result;

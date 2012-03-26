@@ -4,8 +4,8 @@ CC = gcc
 
 default: schemeParser
 
-schemeParser: scheme.tab.o scheme.o
-	$(CC) -o schemeParser scheme.o scheme.tab.o $(LIBOPT)
+schemeParser: scheme.tab.o scheme.o semantics.o
+	$(CC) -o schemeParser scheme.o scheme.tab.o semantics.o $(LIBOPT)
 
 scheme.tab.o: scheme.y
 	bison -d scheme.y

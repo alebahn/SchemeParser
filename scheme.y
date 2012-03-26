@@ -1,10 +1,14 @@
 %{
 	#include <stdio.h>
 %}
+%code requires {
+	#include "semantics.h"
+}
 %union {
 	float fval;
 	int ival;
 	char *sval;
+	datum *dval;
 }
 %token QUOTE_MARK
 %token <sval> STRING
@@ -14,6 +18,11 @@
 %token QUOTE "quote"
 %token DEFINE "define"
 %token LAMBDA "lambda"
+
+%type <dval> expression;
+%type <dval> literal;
+%type <dval> number;
+%type <dval> datum;
 %%
 
 commands_or_defs:	commands_or_defs command_or_def
@@ -24,32 +33,36 @@ command_or_def:		define
 	      |		command
 	      ;
 
-define:			'(' "define" VARIABLE expression ')'	{ printf("definition"); }
+define:			'(' "define" VARIABLE expression ')'	{defineVar($3, $4); }
       ;
 
-command:		expression	{printf("command"); }
+command:		expression	{ printDatum($1);}
        ;
 
-expression:		VARIABLE		{printf("expression "); }
-	  |		literal			{printf("expression "); }
+expression:		VARIABLE		{$$ = lookupVar($1); }
+	  |		literal			{$$ = $1 }
 	  |		procedure_call		{printf("expression "); }
 	  |		lambda_expression	{printf("expression "); }
 	  ;
 
 literal:		quotation	{printf("literal "); }
-       |		number		{printf("literal "); }
-       |		STRING		{printf("literal "); }
+       |		number		{$$ = $1; }
+       |		STRING		{$$ = malloc(sizeof(datum));
+     					*$$ = (datum){D_STR, {.valStr=$1}}; }
        ;
 
-number:			NUMBER		{printf("number "); }
-      |			FNUMBER		{printf("number "); }
+number:			NUMBER		{$$ = malloc(sizeof(datum));
+      					*$$ = (datum){D_INT, {.valInt=$1}}; }
+      |			FNUMBER		{$$ = malloc(sizeof(datum));
+      					*$$ = (datum){D_FLOAT, {.valFloat=$1}}; }
       ;
 
 quotation:		QUOTE_MARK datum	{printf("quotation "); }
 	 |		'(' "quote" datum ')'	{printf("quotation "); }
 
 datum:			number		{printf("datum "); }
-     |			STRING		{printf("datum "); }
+     |			STRING		{$$=malloc(sizeof(datum));
+     					*$$=(datum){D_STR, {.valStr=$1}}; }
      |			VARIABLE	{printf("datum "); }
      |			list		{printf("datum "); }
      ;

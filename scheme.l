@@ -10,10 +10,11 @@ lambda {return LAMBDA;}
 define {return DEFINE;}
 quote {return QUOTE;}
 ' {return QUOTE_MARK;}
-[a-zA-Z][a-zA-Z0-9]* {yylval.sval=yytext; return VARIABLE;}
+	[a-zA-Z][a-zA-Z0-9]* {yylval.sval=malloc(strlen(yytext)+1); strcpy(yylval.sval,yytext); return VARIABLE;}
 . {return yytext[0];}
 %%
 main()
 {
+	initializeTable();
 	yyparse();
 }

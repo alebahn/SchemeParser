@@ -56,7 +56,6 @@ struct tableRecord* symbolTable;
 int tableSize, tableMaxSize;
 
 int isNumeric(char* str);
-datum* executeCommand(datum* cmd);
 datum* doQuote(datum* dtm);
 int defineVar(char* name, datum* value);
 datum* createFuncPoint(datum* (*funcPtr) (datum*));

@@ -28,7 +28,7 @@
 %type <dval> list;
 %type <dval> datums;
 %type <dval> procedure_call;
-%type <sval> operator;
+%type <dval> operator;
 %type <dval> expressions;
 %type <dval> lambda_expression;
 %type <dval> formals;
@@ -90,14 +90,14 @@ datums:			datum datums	{$$ = malloc(sizeof(datum));
       					*$$ = (datum){D_NULL}; }
       ;
 
-procedure_call:		'(' operator expressions ')'	{$$ = doProcedureCall($2, $3); }
+procedure_call:		'(' operator expressions ')'	{$$ = executeLambda($2, $3); }
 	      ;
 
-operator:		VARIABLE	{$$ = $1; }
-	|		'+'		{$$ = "+"; }
-	|		'-'		{$$ = "-"; }
-	|		'*'		{$$ = "*"; }
-	|		'/'		{$$ = "/"; }
+operator:		expression	{$$ = $1; }
+	|		'+'		{$$ = lookupVar("+"); }
+	|		'-'		{$$ = lookupVar("-"); }
+	|		'*'		{$$ = lookupVar("*"); }
+	|		'/'		{$$ = lookupVar("/"); }
 	;
 
 expressions:		expression expressions	{$$ = malloc(sizeof(datum));
@@ -134,7 +134,7 @@ body:			VARIABLE		{$$ = malloc(sizeof(datum));
 	  ;
 
 procedure:		'(' operator bodies ')'	{$$ = malloc(sizeof(datum));
-	      					*$$ = (datum){D_CONS, {.valCons=(cons){lookupVar($2), $3}}}; }
+	      					*$$ = (datum){D_CONS, {.valCons=(cons){$2, $3}}}; }
          ;
 
 bodies:			body bodies		{$$ = malloc(sizeof(datum));

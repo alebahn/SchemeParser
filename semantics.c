@@ -84,34 +84,6 @@ datum* lookupVar(char* name)
 	return NULL;
 }
 
-datum* replaceVars(datum* body)
-{
-	if(body->quote)
-		return body;
-	datum *car, *cdr, *result;
-	switch(body->type)
-	{
-	case D_STR:
-		return lookupVar(body->valStr);
-	case D_CONS:
-		car=replaceVars(body->valCons.car);
-		if(car==NULL)
-			return NULL;
-		cdr=replaceVars(body->valCons.cdr);
-		if(car==NULL)
-			return NULL;
-		result=malloc(sizeof(datum));
-		*result=(datum){D_CONS, {.valCons=(cons){car, cdr}}};
-		return result;
-	default:
-		return body;
-	}
-}
-datum* executeCommand(datum* cmd)
-{
-	datum* expr = replaceVars(cmd);
-	return executeDatum(expr);
-}
 datum* doQuote(datum* dtm)
 {
 	datum* result = malloc(sizeof(datum));

@@ -23,7 +23,10 @@
 %type <dval> expression;
 %type <dval> literal;
 %type <dval> number;
+%type <dval> quotation;
 %type <dval> datum;
+%type <dval> list;
+%type <dval> datums;
 %type <dval> procedure_call;
 %type <sval> operator;
 %type <dval> expressions;
@@ -43,7 +46,7 @@ command_or_def:		define
 define:			'(' "define" VARIABLE expression ')'	{defineVar($3, $4); }
       ;
 
-command:		expression	{ $$ = executeDatum($1); }
+command:		expression	{ $$ = executeCommand($1); }
        ;
 
 expression:		VARIABLE		{$$ = malloc(sizeof(datum));
@@ -53,7 +56,7 @@ expression:		VARIABLE		{$$ = malloc(sizeof(datum));
 	  |		lambda_expression	{$$ = $1; }
 	  ;
 
-literal:		quotation	{printf("literal "); }
+literal:		quotation	{$$ = $1; }
        |		number		{$$ = $1; }
        |		STRING		{$$ = malloc(sizeof(datum));
      					*$$ = (datum){D_STR, {.valStr=$1}}; }
@@ -65,21 +68,24 @@ number:			NUMBER		{$$ = malloc(sizeof(datum));
       					*$$ = (datum){D_FLOAT, {.valFloat=$1}}; }
       ;
 
-quotation:		QUOTE_MARK datum	{printf("quotation "); }
-	 |		'(' "quote" datum ')'	{printf("quotation "); }
+quotation:		QUOTE_MARK datum	{$$ = $2; }
+	 |		'(' "quote" datum ')'	{$$ = $3; }
 
-datum:			number		{printf("datum "); }
-     |			STRING		{$$=malloc(sizeof(datum));
-     					*$$=(datum){D_STR, {.valStr=$1}}; }
-     |			VARIABLE	{printf("datum "); }
-     |			list		{printf("datum "); }
+datum:			number		{$$ = $1; }
+     |			STRING		{$$ = malloc(sizeof(datum));
+     					*$$ = (datum){D_STR, {.valStr=$1}}; }
+     |			VARIABLE	{$$ = malloc(sizeof(datum));
+     					*$$ = (datum){D_STR, {.valStr=$1}}; }
+     |			list		{$$ = $1; }
      ;
 
-list:			'(' datums ')'	{printf("list "); }
+list:			'(' datums ')'	{$$ = $2; }
     ;
 
-datums:			datums datum
-      |
+datums:			datum datums	{$$ = malloc(sizeof(datum));
+      					*$$ = (datum){D_CONS, {.valCons=(cons){$1, $2}}}; }
+      |			/*empty*/	{$$ = malloc(sizeof(datum));
+      					*$$ = (datum){D_NULL}; }
       ;
 
 procedure_call:		'(' operator expressions ')'	{$$ = malloc(sizeof(datum));

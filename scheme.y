@@ -33,6 +33,9 @@
 %type <dval> lambda_expression;
 %type <dval> formals;
 %type <dval> variables;
+%type <dval> body;
+%type <dval> procedure;
+%type <dval> bodies;
 %%
 
 commands_or_defs:	commands_or_defs command_or_def
@@ -46,11 +49,10 @@ command_or_def:		define
 define:			'(' "define" VARIABLE expression ')'	{defineVar($3, $4); }
       ;
 
-command:		expression	{ $$ = executeCommand($1); }
+command:		expression	{ $$ = $1; }
        ;
 
-expression:		VARIABLE		{$$ = malloc(sizeof(datum));
-	  					*$$ = (datum){D_STR, {.valStr=$1}}; }
+expression:		VARIABLE		{$$ = lookupVar($1); }
 	  |		literal			{$$ = $1; }
 	  |		procedure_call		{$$ = $1; }
 	  |		lambda_expression	{$$ = $1; }
@@ -88,8 +90,7 @@ datums:			datum datums	{$$ = malloc(sizeof(datum));
       					*$$ = (datum){D_NULL}; }
       ;
 
-procedure_call:		'(' operator expressions ')'	{$$ = malloc(sizeof(datum));
-	      						*$$ = (datum){D_CONS, {.valCons=(cons){lookupVar($2), $3}}}; }
+procedure_call:		'(' operator expressions ')'	{$$ = doProcedureCall($2, $3); }
 	      ;
 
 operator:		VARIABLE	{$$ = $1; }
@@ -105,7 +106,7 @@ expressions:		expression expressions	{$$ = malloc(sizeof(datum));
 	   					*$$ = (datum){D_NULL}; }
 	   ;
 
-lambda_expression:	'(' "lambda" formals expression ')'	{$$ = createLambda($3, $4); }
+lambda_expression:	'(' "lambda" formals body ')'	{$$ = createLambda($3, $4); }
 		 ;
 
 formals:		'(' variables ')'	{$$ = $2; }
@@ -124,3 +125,20 @@ variables:		VARIABLE variables	{datum* dVar = malloc(sizeof(datum));
 	 |		/*empty*/		{$$ = malloc(sizeof(datum));
 	 					*$$ = (datum){D_NULL}; }
 	 ;
+
+body:			VARIABLE		{$$ = malloc(sizeof(datum));
+	  					*$$ = (datum){D_STR, {.valStr=$1}}; }
+	  |		literal			{$$ = $1; }
+	  |		procedure		{$$ = $1; }
+	  |		lambda_expression	{$$ = $1; }
+	  ;
+
+procedure:		'(' operator bodies ')'	{$$ = malloc(sizeof(datum));
+	      					*$$ = (datum){D_CONS, {.valCons=(cons){lookupVar($2), $3}}}; }
+         ;
+
+bodies:			body bodies		{$$ = malloc(sizeof(datum));
+      						*$$ = (datum){D_CONS, {.valCons=(cons){$1, $2}}}; }
+      |			/*empty*/		{$$ = malloc(sizeof(datum));
+	 					*$$ = (datum){D_NULL}; }
+      ;

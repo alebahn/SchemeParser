@@ -256,7 +256,10 @@ datum* doCar(datum* args)
 		return NULL;
 	if(args->type!=D_CONS)
 		return NULL;
-	return args->valCons.car;
+	if(args->valCons.cdr->type!=D_NULL)
+		return NULL;
+	datum* arg=args->valCons.car;
+	return arg->valCons.car;
 }
 datum* doCdr(datum* args)
 {
@@ -264,7 +267,10 @@ datum* doCdr(datum* args)
 		return NULL;
 	if(args->type!=D_CONS)
 		return NULL;
-	return args->valCons.cdr;
+	if(args->valCons.cdr->type!=D_NULL)
+		return NULL;
+	datum* arg=args->valCons.car;
+	return arg->valCons.cdr;
 }
 datum* replaceArg(datum* args, datum* arg)
 {

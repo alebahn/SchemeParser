@@ -110,6 +110,20 @@ datum* executeCommand(datum* cmd)
 	datum* expr = replaceVars(cmd);
 	return executeDatum(expr);
 }
+datum* doQuote(datum* dtm)
+{
+	datum* result = malloc(sizeof(datum));
+	*result=*dtm;
+	switch(result->type)
+	{
+	case D_CONS:
+	case D_STR:
+	case D_NULL:
+		result->quote=1;
+		break;
+	}
+	return result;
+}
 
 datum* doProcedureCall(char* name, datum* args)
 {

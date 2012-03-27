@@ -39,6 +39,7 @@ struct datum
 		struct cons valCons;
 		struct lambda valLambda;
 	};
+	int quote;
 };
 
 struct tableRecord
@@ -56,6 +57,7 @@ int tableSize, tableMaxSize;
 
 int isNumeric(char* str);
 datum* executeCommand(datum* cmd);
+datum* doQuote(datum* dtm);
 int defineVar(char* name, datum* value);
 datum* createFuncPoint(datum* (*funcPtr) (datum*));
 void initializeTable();

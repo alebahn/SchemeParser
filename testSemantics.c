@@ -8,6 +8,7 @@ int main()
 	int result=1;
 	result&=testIsNumeric();
 	result&=testAreEqual();
+	result&=testDoQuote();
 	result&=testVars();
 	result&=testDoProcedureCalls();
 	result&=testDoCar();
@@ -86,6 +87,36 @@ int testAreEqual()
 	result&=testOneAreEqual(&val1, NULL, 0);
 	result&=testOneAreEqual(NULL, NULL, 1);
 	printf("*areEqual %s*\n",result?"PASSED":"FAILED");
+	return result;
+}
+
+int testOneQuote(datum* in, int expected)
+{
+	printf("Testing quote on ");
+	printDatum(in);
+	datum* out = doQuote(in);
+	if(out == NULL)
+	{
+		printf(" result NULL.\n");
+		return;
+	}
+	printf(" quoted? %i expected %i\n", out->quote, expected);
+	return out->quote==expected;
+}
+int testDoQuote()
+{
+	int result=1;
+	datum val1={D_INT, {.valInt=3}};
+	result&=testOneQuote(&val1, 0);
+	datum val2={D_STR, {.valStr="red"}};
+	result&=testOneQuote(&val2, 1);
+	datum val3={D_CONS, {.valCons=(cons){&val1, &val2}}};
+	result&=testOneQuote(&val3, 1);
+	datum val4={D_NULL};
+	result&=testOneQuote(&val4, 1);
+	datum val5={D_FLOAT, {.valFloat=2.5}};
+	result&=testOneQuote(&val5, 0);
+	printf("*doQuote %s*\n",result?"PASSED":"FAILED");
 	return result;
 }
 

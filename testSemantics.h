@@ -9,6 +9,8 @@ int testOneIsNumeric(char* input, int expected);
 int testIsNumeric();
 int testOneAreEqual(datum* val1, datum* val2, int expected);
 int testAreEqual();
+int testOneQuote(datum* in, int expected);
+int testDoQuote();
 int testOneVar(char* varName, datum* var);
 int testVars();
 int testOneProcedure(char* op, datum* args, int numArg, datum* expected);

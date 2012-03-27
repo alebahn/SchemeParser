@@ -184,6 +184,8 @@ int testDoProcedureCalls()
 		{D_INT, {.valInt=5}}};
 	expected=(datum){D_INT, {.valInt=-6}};
 	result&=testOneProcedure("-", test7, 3, &expected);
+	datum test8[]={{D_INT, {.valInt=3}}, {D_NULL}};
+	result&=testOneProcedure("-", test8, 2, NULL);
 	result&=testOneProcedure("+", NULL, 0, NULL);
 	result&=testProcedureNullArg();
 

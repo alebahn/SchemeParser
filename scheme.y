@@ -68,8 +68,8 @@ number:			NUMBER		{$$ = malloc(sizeof(datum));
       					*$$ = (datum){D_FLOAT, {.valFloat=$1}}; }
       ;
 
-quotation:		QUOTE_MARK datum	{$$ = $2; }
-	 |		'(' "quote" datum ')'	{$$ = $3; }
+quotation:		QUOTE_MARK datum	{$$ = doQuote($2); }
+	 |		'(' "quote" datum ')'	{$$ = doQuote($3); }
 
 datum:			number		{$$ = $1; }
      |			STRING		{$$ = malloc(sizeof(datum));

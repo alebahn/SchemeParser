@@ -86,6 +86,8 @@ datum* lookupVar(char* name)
 
 datum* replaceVars(datum* body)
 {
+	if(body->quote)
+		return body;
 	datum *car, *cdr, *result;
 	switch(body->type)
 	{

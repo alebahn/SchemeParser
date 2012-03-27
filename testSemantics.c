@@ -241,17 +241,23 @@ int testDoCar()
 	int result=1;
 	datum dArg=(datum){D_INT, {.valInt=4}};
 	datum arg=genListFromArray(&dArg, 1);
-	result&=testOneCar(&arg, &dArg);
+	datum wArg=genListFromArray(&arg, 1);
+	result&=testOneCar(&wArg, &dArg);
 	deallocateList(&arg);
 	datum car=genListFromArray((datum[3]){{D_INT, {.valInt=1}},
 			{D_INT, {.valInt=2}}, {D_INT, {.valInt=3}}}, 3);
 	datum cdr={D_FLOAT, {.valFloat=2.5}};
-	result&=testOneCar((datum[1]){{D_CONS, {.valCons={&car, &cdr}}}}, &car);
+	wArg=genListFromArray((datum[1]){{D_CONS, {.valCons={&car, &cdr}}}}, 1);
+	result&=testOneCar(&wArg, &car);
 	deallocateList(&car);
 	car=(datum){D_STR, {.valStr="CAR"}};
 	cdr=(datum){D_STR, {.valStr="CDR"}};
-	result&=testOneCar((datum[1]){{D_CONS, {.valCons={&car, &cdr}}}}, &car);
+	wArg=genListFromArray((datum[1]){{D_CONS, {.valCons={&car, &cdr}}}}, 1);
+	result&=testOneCar(&wArg, &car);
 	result&=testOneCar(&car, NULL);
+	wArg=genListFromArray((datum[3]){{D_INT, {.valInt=1}},
+			{D_INT, {.valInt=2}}, {D_INT, {.valInt=3}}}, 3);
+	result&=testOneCar(&wArg, NULL);
 	result&=testOneCar(NULL, NULL);
 	printf("*testDoCar %s*\n",result?"PASSED":"FAILED");
 	return result;
@@ -275,19 +281,25 @@ int testDoCdr()
 	int iArg=4;
 	datum dArg=(datum){D_INT, {.valInt=4}};
 	datum arg=genListFromArray(&dArg, 1);
-	result&=testOneCdr(&arg, (datum[1]){{D_NULL}});
+	datum wArg=genListFromArray(&arg, 1);
+	result&=testOneCdr(&wArg, (datum[1]){{D_NULL}});
 	deallocateList(&arg);
 	arg=genListFromArray((datum[3]){{D_INT, {.valInt=1}},
 			{D_INT, {.valInt=2}}, {D_INT, {.valInt=3}}}, 3);
 	datum cdr=genListFromArray((datum[2]){{D_INT, {.valInt=2}},
 			{D_INT, {.valInt=3}}}, 2);
-	result&=testOneCdr(&arg, &cdr);
+	wArg=genListFromArray(&arg, 1);
+	result&=testOneCdr(&wArg, &cdr);
 	deallocateList(&arg);
 	deallocateList(&cdr);
 	datum car={D_STR, {.valStr="CAR"}};
 	cdr=(datum){D_STR, {.valStr="CDR"}};
-	result&=testOneCdr((datum[1]){{D_CONS, {.valCons={&car, &cdr}}}}, &cdr);
+	wArg=genListFromArray((datum[1]){{D_CONS, {.valCons={&car, &cdr}}}}, 1);
+	result&=testOneCdr(&wArg, &cdr);
 	result&=testOneCdr(&cdr, NULL);
+	wArg=genListFromArray((datum[3]){{D_INT, {.valInt=1}},
+			{D_INT, {.valInt=2}}, {D_INT, {.valInt=3}}}, 3);
+	result&=testOneCdr(&wArg, NULL);
 	result&=testOneCdr(NULL, NULL);
 	printf("*testDoCdr %s*\n",result?"PASSED":"FAILED");
 	return result;

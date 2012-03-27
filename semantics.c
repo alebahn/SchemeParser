@@ -149,6 +149,8 @@ datum* setupArith(datum* args, int identity, datum* (*recurFunc)(datum*), enum D
 
 void finishArith(enum DATUM_TYPE resultType, datum* result, int resultInt, float resultFloat)
 {
+	if(result == NULL)
+		return;
 	switch(resultType)
 	{
 	case D_INT:

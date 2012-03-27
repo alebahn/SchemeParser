@@ -27,6 +27,9 @@
 %type <dval> procedure_call;
 %type <sval> operator;
 %type <dval> expressions;
+%type <dval> lambda_expression;
+%type <dval> formals;
+%type <dval> variables;
 %%
 
 commands_or_defs:	commands_or_defs command_or_def
@@ -43,10 +46,11 @@ define:			'(' "define" VARIABLE expression ')'	{defineVar($3, $4); }
 command:		expression	{ $$ = executeDatum($1); }
        ;
 
-expression:		VARIABLE		{$$ = lookupVar($1); }
+expression:		VARIABLE		{$$ = malloc(sizeof(datum));
+	  					*$$ = (datum){D_STR, {.valStr=$1}}; }
 	  |		literal			{$$ = $1; }
 	  |		procedure_call		{$$ = $1; }
-	  |		lambda_expression	{printf("expression "); }
+	  |		lambda_expression	{$$ = $1; }
 	  ;
 
 literal:		quotation	{printf("literal "); }
@@ -95,13 +99,22 @@ expressions:		expression expressions	{$$ = malloc(sizeof(datum));
 	   					*$$ = (datum){D_NULL}; }
 	   ;
 
-lambda_expression:	'(' "lambda" formals expression ')'	{printf("lambda_expression "); }
+lambda_expression:	'(' "lambda" formals expression ')'	{$$ = createLambda($3, $4); }
 		 ;
 
-formals:		'(' variables ')'	{printf("formals "); }
-       |		VARIABLE		{printf("formals "); }
+formals:		'(' variables ')'	{$$ = $2; }
+       |		VARIABLE		{datum* dNull = malloc(sizeof(datum));
+       						datum* dVar = malloc(sizeof(datum));
+						$$ = malloc(sizeof(datum));
+						*dNull = (datum){D_NULL};
+						*dVar = (datum){D_STR, {.valStr=$1}};
+						*$$ = (datum){D_CONS, {.valCons=(cons){dVar, dNull}}}; }
        ;
 
-variables:		variables VARIABLE
-	 |		
+variables:		VARIABLE variables	{datum* dVar = malloc(sizeof(datum));
+	 					$$ = malloc(sizeof(datum));
+						*dVar = (datum){D_STR, {.valStr=$1}};
+						*$$ = (datum){D_CONS, {.valCons=(cons){dVar, $2}}}; }
+	 |		/*empty*/		{$$ = malloc(sizeof(datum));
+	 					*$$ = (datum){D_NULL}; }
 	 ;

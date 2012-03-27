@@ -93,6 +93,8 @@ datum* doProcedureCall(char* name, datum* args)
 }
 datum* executeDatum(datum* expr)
 {
+	if(expr==NULL)
+		return NULL;
 	if(expr->type==D_CONS)
 	{
 		return executeLambda(expr->valCons.car, expr->valCons.cdr);
